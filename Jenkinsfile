@@ -1,30 +1,30 @@
-node {
- 	// Clean workspace before doing anything
-    deleteDir()
+#!/usr/bin/env groovy
+properties([
+    [$class: 'GithubProjectProperty',
+    displayName: '',
+    projectUrlStr: 'http://52.207.55.50:8080/'],
+    pipelineTriggers([githubPush()])])
 
-    try {
-        stage ('Clone') {
-        	checkout scm
+pipeline {
+    agent any 
+
+    stages {
+        stage('Build') { 
+            steps { 
+                sh 'pwd' 
+            }
         }
-        stage ('Build') {
-        	sh "echo 'shell scripts to build project...'"
+        stage('Test'){
+            steps {
+                sh 'java -version'
+                
+            }
         }
-        stage ('Tests') {
-	        parallel 'static': {
-	            sh "echo 'shell scripts to run static tests...'"
-	        },
-	        'unit': {
-	            sh "echo 'shell scripts to run unit tests...'"
-	        },
-	        'integration': {
-	            sh "echo 'shell scripts to run integration tests...'"
-	        }
+        stage('Deploy') {
+            steps {
+                sh 'ls'
+                sh 'pwd'
+            }
         }
-      	stage ('Deploy') {
-            sh "echo 'shell scripts to deploy to server...'"
-      	}
-    } catch (err) {
-        currentBuild.result = 'FAILED'
-        throw err
     }
 }
